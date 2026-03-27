@@ -239,15 +239,20 @@
 
 <div class="container">
   <div style="text-align:center;margin-bottom:1.5rem;">
-    <button onclick="playAll()" style="padding:14px 40px;border-radius:30px;border:2px solid var(--gold);background:var(--gold-dim);color:var(--gold);font-family:'Cinzel',serif;font-size:1rem;letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;">PLAY ALL PREVIEWS</button>
+    <button id="playAllBtn" onclick="playAllToggle()" style="padding:14px 40px;border-radius:30px;border:2px solid var(--gold);background:var(--gold-dim);color:var(--gold);font-family:'Cinzel',serif;font-size:1rem;letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;">PLAY ALL PREVIEWS</button>
   </div>
 
   <div class="ambient-layer" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:1.5rem;">
     <div style="font-size:0.8rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Ambient Nature Layer</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <button class="amb-btn" id="amb-waves" onclick="toggleAmbient('waves')" style="padding:10px 20px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;">~ Waves</button>
-      <button class="amb-btn" id="amb-birds" onclick="toggleAmbient('birds')" style="padding:10px 20px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;">Birds</button>
-      <input type="range" id="amb-vol" min="0" max="100" value="30" style="flex:1;min-width:80px;accent-color:var(--gold);" oninput="setAmbientVol(this.value)" title="Nature volume">
+      <div style="display:flex;align-items:center;gap:8px;flex:1;">
+        <button class="amb-btn" id="amb-waves" onclick="toggleAmbient('waves')" style="padding:8px 14px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.85rem;transition:all 0.2s;white-space:nowrap;">Waves</button>
+        <input type="range" min="0" max="100" value="30" style="flex:1;accent-color:var(--gold);" oninput="ambientSounds.waves.audio.volume=this.value/100">
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex:1;">
+        <button class="amb-btn" id="amb-birds" onclick="toggleAmbient('birds')" style="padding:8px 14px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.85rem;transition:all 0.2s;white-space:nowrap;">Birds</button>
+        <input type="range" min="0" max="100" value="30" style="flex:1;accent-color:var(--gold);" oninput="ambientSounds.birds.audio.volume=this.value/100">
+      </div>
     </div>
   </div>
 
@@ -336,12 +341,22 @@ function setAmbientVol(val) {
   Object.values(ambientSounds).forEach(s => s.audio.volume = v);
 }
 
-function playAll() {
-  // Start nature layers automatically
-  Object.entries(ambientSounds).forEach(([key, s]) => {
-    if (!s.active) toggleAmbient(key);
-  });
-  playTrack(0);
+function playAllToggle() {
+  if (isPlaying) {
+    audio.pause();
+    isPlaying = false;
+    Object.entries(ambientSounds).forEach(([key, s]) => {
+      if (s.active) toggleAmbient(key);
+    });
+    document.getElementById('playAllBtn').textContent = 'PLAY ALL PREVIEWS';
+    updateUI();
+  } else {
+    Object.entries(ambientSounds).forEach(([key, s]) => {
+      if (!s.active) toggleAmbient(key);
+    });
+    if (currentTrack < 0) playTrack(0); else { audio.play(); isPlaying = true; updateUI(); }
+    document.getElementById('playAllBtn').textContent = 'STOP';
+  }
 }
 
 function fmt(s) {
