@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>Earth Harmony - Music Sampler for Soul2Sole Massage</title>
+<title>Earth Harmony — Music Sampler for Soul2Sole Massage</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500&display=swap');
   
@@ -234,30 +234,30 @@
        style="width:100%;max-height:220px;object-fit:cover;object-position:center 30%;border-radius:0 0 16px 16px;opacity:0.7;margin-bottom:1.5rem;">
   <h1>Earth Harmony</h1>
   <div class="subtitle">Curated Music Sampler for Soul2Sole Massage</div>
-  <div class="badge">Ultimate Spa and Reiki Collection - 30s Previews</div>
+  <div class="badge">Ultimate Spa & Reiki Collection · 30s Previews</div>
 </div>
 
 <div class="container">
   <div style="text-align:center;margin-bottom:1.5rem;">
-    <button onclick="playAll()" style="padding:14px 40px;border-radius:30px;border:2px solid var(--gold);background:var(--gold-dim);color:var(--gold);font-family:'Cinzel',serif;font-size:1rem;letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;">PLAY ALL PREVIEWS</button>
+    <button onclick="playAll()" style="padding:14px 40px;border-radius:30px;border:2px solid var(--gold);background:var(--gold-dim);color:var(--gold);font-family:'Cinzel',serif;font-size:1rem;letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;">▶ &nbsp; PLAY ALL — 30s Previews</button>
   </div>
 
   <div class="ambient-layer" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:1.5rem;">
-    <div style="font-size:0.8rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Ambient Nature Layer</div>
+    <div style="font-size:0.8rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">🌿 Ambient Nature Layer</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <button class="amb-btn" id="amb-waves" onclick="toggleAmbient('waves')" style="padding:10px 20px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;">~ Waves</button>
-      <button class="amb-btn" id="amb-birds" onclick="toggleAmbient('birds')" style="padding:10px 20px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;">Birds</button>
+      <button class="amb-btn" id="amb-waves" onclick="toggleAmbient('waves')" style="padding:10px 20px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;">🌊 Waves</button>
+      <button class="amb-btn" id="amb-birds" onclick="toggleAmbient('birds')" style="padding:10px 20px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;">🐦 Birds</button>
       <input type="range" id="amb-vol" min="0" max="100" value="30" style="flex:1;min-width:80px;accent-color:var(--gold);" oninput="setAmbientVol(this.value)" title="Nature volume">
     </div>
   </div>
 
-  <div class="section-label">Ambient Bliss Series - 432 Hz</div>
+  <div class="section-label">Ambient Bliss Series — 432 Hz</div>
   <div id="tracks-ambient"></div>
   
   <div class="section-label">Ambient Piano Series</div>
   <div id="tracks-piano"></div>
   
-  <div class="section-label">Healing Frequencies - 528 Hz</div>
+  <div class="section-label">Healing Frequencies — 528 Hz</div>
   <div id="tracks-528"></div>
   
   <div class="section-label">Deep Journey</div>
@@ -265,7 +265,7 @@
 </div>
 
 <div class="now-playing" id="nowPlaying">
-  <button class="play-btn" id="npBtn" onclick="togglePlay()">II</button>
+  <button class="play-btn" id="npBtn" onclick="togglePlay()">⏸</button>
   <div class="np-info">
     <div class="np-title" id="npTitle"></div>
     <div class="np-progress" onclick="seek(event)"><div class="np-fill" id="npFill"></div></div>
@@ -274,7 +274,7 @@
 </div>
 
 <div class="footer">
-  <p>🎵 Marcus Fung - <a href="https://www.earthharmonysoundwellness.com">Earth Harmony Sound & Wellness</a></p>
+  <p>🎵 Marcus Fung — <a href="https://www.earthharmonysoundwellness.com">Earth Harmony Sound & Wellness</a></p>
   <p style="margin-top:4px;">Curated exclusively for Soul2Sole Massage</p>
 </div>
 
@@ -282,7 +282,7 @@
 const DEFAULT_PREVIEW_LEN_VAL = 20; // 20 second previews
 
 const tracks = [
-  // Ambient Bliss - 432 Hz
+  // Ambient Bliss — 432 Hz
   { name: "The Return Home", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_15a64d3a09a74ccc904f052e83e70cdf.mp3", img: "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=120&q=80" },
   { name: "Patience", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_daa5737b7246465aa100082b4ca79ff5.mp3", img: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=120&q=80" },
   { name: "Angelic", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_b1b01f7379c449f0ae389c1b51103d60.mp3", img: "https://images.unsplash.com/photo-1501426026826-31c667bdf23d?w=120&q=80" },
@@ -356,7 +356,7 @@ function renderTracks() {
     sections[t.section].push(`
       <div class="track" id="track-${i}" onclick="playTrack(${i})">
         <img src="${t.img}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;">
-        <button class="play-btn">Play</button>
+        <button class="play-btn">▶</button>
         <div class="track-info">
           <div class="track-name">${t.name}</div>
           <div class="track-meta">${t.freq}</div>
@@ -372,7 +372,7 @@ function renderTracks() {
   document.getElementById('tracks-journey').innerHTML = sections.journey.join('');
 }
 
-// Preview window - tracks play from startAt for previewLen seconds
+// Preview window — tracks play from startAt for previewLen seconds
 // Set per-track or use defaults
 const DEFAULT_PREVIEW_LEN = 30; // seconds
 
@@ -431,13 +431,13 @@ function togglePlay() {
 }
 
 function updateUI() {
-  document.getElementById('npBtn').textContent = isPlaying ? 'II' : 'Play';
+  document.getElementById('npBtn').textContent = isPlaying ? '⏸' : '▶';
   document.querySelectorAll('.track').forEach((t,i) => {
     const btn = t.querySelector('.play-btn');
     if (i === currentTrack) {
-      btn.textContent = isPlaying ? 'II' : 'Play';
+      btn.textContent = isPlaying ? '⏸' : '▶';
     } else {
-      btn.textContent = 'Play';
+      btn.textContent = '▶';
     }
   });
 }
