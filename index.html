@@ -155,9 +155,10 @@
   .progress-fill {
     height: 100%;
     background: var(--gold);
-    border-radius: 2px;
+    border-radius: 4px;
     width: 0%;
     transition: width 0.3s linear;
+    pointer-events: none;
   }
 
   .now-playing {
@@ -228,9 +229,12 @@
 <body>
 
 <div class="hero">
+  <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=80" 
+       alt="Massage therapy" 
+       style="width:100%;max-height:220px;object-fit:cover;object-position:center 30%;border-radius:0 0 16px 16px;opacity:0.7;margin-bottom:1.5rem;">
   <h1>Earth Harmony</h1>
   <div class="subtitle">Curated Music Sampler for Soul2Sole Massage</div>
-  <div class="badge">Ultimate Spa & Reiki Collection</div>
+  <div class="badge">Ultimate Spa & Reiki Collection · 20s Previews</div>
 </div>
 
 <div class="container">
@@ -262,26 +266,23 @@
 </div>
 
 <script>
+const DEFAULT_PREVIEW_LEN_VAL = 20; // 20 second previews
+
 const tracks = [
   // Ambient Bliss — 432 Hz
-  { name: "Mother Nurture", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_a2460a35daef43e8996291514399f3f4.mp3" },
   { name: "The Return Home", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_15a64d3a09a74ccc904f052e83e70cdf.mp3" },
   { name: "Patience", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_daa5737b7246465aa100082b4ca79ff5.mp3" },
-  { name: "Spirit", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_3f1173daa59d4f488db65c73ab3a3eb8.mp3" },
-  { name: "Terra Nova", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_2c775246e8424b9199fda00440ec8f0c.mp3" },
   { name: "Angelic", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_b1b01f7379c449f0ae389c1b51103d60.mp3" },
   { name: "Rise", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_48f1151725eb4c88a5cd146fc828288c.mp3" },
 
   // Ambient Piano
   { name: "Blossoms", section: "piano", freq: "Piano", url: "https://music.wixstatic.com/mp3/ecb697_6fa750935ad44571a7ef23ad31a28771.mp3" },
   { name: "Sweetness", section: "piano", freq: "Piano", url: "https://music.wixstatic.com/mp3/ecb697_307cc02777104f08968b3cb522567e01.mp3" },
-  { name: "Innocence", section: "piano", freq: "Piano", url: "https://music.wixstatic.com/mp3/ecb697_57c384a7f5c74a5bbf1e440c252ae8d7.mp3" },
   { name: "Radical Acceptance", section: "piano", freq: "Piano", url: "https://music.wixstatic.com/mp3/ecb697_1b05d175e3b24e6eb8d77c13d38ebf01.mp3" },
 
   // 528 Hz
   { name: "You Are Welcome Here", section: "528", freq: "528 Hz", url: "https://music.wixstatic.com/mp3/ecb697_91b1b5a86aac41c8b8d565904eddddf3.mp3" },
   { name: "Self Mastery", section: "528", freq: "528 Hz", url: "https://music.wixstatic.com/mp3/ecb697_af79dd864ffc4f6fb1f41ff963f86cc0.mp3" },
-  { name: "My Rest is Always Healing", section: "528", freq: "528 Hz", url: "https://music.wixstatic.com/mp3/ecb697_c8be7ee9b9ae46fbabd45e87369565f4.mp3" },
 
   // Deep Journey
   { name: "Awakening the Higher Self", section: "journey", freq: "Deep", url: "https://music.wixstatic.com/mp3/ecb697_0ce3892c9eb940d28ca252f6ad13b1c8.mp3" },
@@ -321,7 +322,7 @@ function renderTracks() {
 
 // Preview window — tracks play from startAt for previewLen seconds
 // Set per-track or use defaults
-const DEFAULT_PREVIEW_LEN = 30; // seconds
+const DEFAULT_PREVIEW_LEN = 20; // seconds
 
 function playTrack(i) {
   if (currentTrack === i && isPlaying) {
@@ -396,11 +397,28 @@ function seek(e) {
 }
 
 function scrubTrack(i, e) {
-  if (currentTrack !== i) playTrack(i);
   const bar = e.currentTarget;
   const rect = bar.getBoundingClientRect();
   const pct = (e.clientX - rect.left) / rect.width;
-  if (audio.duration) audio.currentTime = pct * audio.duration;
+  
+  if (currentTrack !== i) {
+    // Start track, then seek once loaded
+    document.querySelectorAll('.track').forEach(t => t.classList.remove('playing'));
+    document.getElementById(`track-${i}`).classList.add('playing');
+    audio.src = tracks[i].url;
+    audio.addEventListener('loadedmetadata', function() {
+      audio.currentTime = pct * audio.duration;
+    }, {once: true});
+    audio.play();
+    isPlaying = true;
+    currentTrack = i;
+    document.getElementById('npTitle').textContent = tracks[i].name;
+    document.getElementById('nowPlaying').classList.add('active');
+    updateUI();
+  } else if (audio.duration) {
+    audio.currentTime = pct * audio.duration;
+    if (!isPlaying) { audio.play(); isPlaying = true; updateUI(); }
+  }
 }
 
 audio.addEventListener('timeupdate', () => {
