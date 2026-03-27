@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Earth Harmony — Music Sampler for Soul2Sole Massage</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500&display=swap');
+  
+  :root {
+    --bg: #0a0a0a;
+    --card: #111111;
+    --card-hover: #151515;
+    --border: #1a1a1a;
+    --gold: #d4a24e;
+    --gold-dim: rgba(212,162,78,0.15);
+    --gold-glow: rgba(212,162,78,0.06);
+    --text: #e8e0d4;
+    --text2: #b8b0a4;
+    --text3: #888078;
+    --playing: #d4a24e;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 3rem 1.5rem 2rem;
+    background: linear-gradient(180deg, rgba(212,162,78,0.05) 0%, transparent 100%);
+  }
+
+  .hero h1 {
+    font-family: 'Cinzel', serif;
+    color: var(--gold);
+    font-size: 1.8rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+  }
+
+  .hero .subtitle {
+    color: var(--text2);
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    font-weight: 300;
+  }
+
+  .hero .badge {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 4px 14px;
+    background: var(--gold-dim);
+    color: var(--gold);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 1rem 3rem;
+  }
+
+  .section-label {
+    font-family: 'Cinzel', serif;
+    color: var(--gold);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .track {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .track:hover { background: var(--card-hover); border-color: var(--gold-dim); }
+  .track.playing { border-color: var(--gold); background: rgba(212,162,78,0.04); }
+
+  .play-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+    border: none;
+    color: var(--gold);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .play-btn:hover { background: var(--gold); color: var(--bg); }
+  .track.playing .play-btn { background: var(--gold); color: var(--bg); }
+
+  .track-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .track-name {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .track-meta {
+    font-size: 0.75rem;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+
+  .track-duration {
+    font-size: 0.8rem;
+    color: var(--text3);
+    flex-shrink: 0;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+    display: none;
+  }
+
+  .track.playing .progress-bar { display: block; }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.3s linear;
+  }
+
+  .now-playing {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #0d0d0d;
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    z-index: 100;
+  }
+
+  .now-playing.active { display: flex; }
+
+  .now-playing .np-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .now-playing .np-title {
+    font-size: 0.85rem;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .now-playing .np-progress {
+    width: 100%;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 6px;
+    cursor: pointer;
+  }
+
+  .now-playing .np-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    width: 0%;
+  }
+
+  .now-playing .np-time {
+    font-size: 0.7rem;
+    color: var(--text3);
+  }
+
+  .footer {
+    text-align: center;
+    padding: 2rem 0 4rem;
+    color: var(--text3);
+    font-size: 0.75rem;
+  }
+
+  .footer a { color: var(--gold); text-decoration: none; }
+
+  @media (max-width: 500px) {
+    .hero h1 { font-size: 1.4rem; }
+    .track { padding: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Earth Harmony</h1>
+  <div class="subtitle">Curated Music Sampler for Soul2Sole Massage</div>
+  <div class="badge">Ultimate Spa & Reiki Collection</div>
+</div>
+
+<div class="container">
+  <div class="section-label">Ambient Bliss Series — 432 Hz</div>
+  <div id="tracks-ambient"></div>
+  
+  <div class="section-label">Ambient Piano Series</div>
+  <div id="tracks-piano"></div>
+  
+  <div class="section-label">Healing Frequencies — 528 Hz</div>
+  <div id="tracks-528"></div>
+  
+  <div class="section-label">Deep Journey</div>
+  <div id="tracks-journey"></div>
+</div>
+
+<div class="now-playing" id="nowPlaying">
+  <button class="play-btn" id="npBtn" onclick="togglePlay()">⏸</button>
+  <div class="np-info">
+    <div class="np-title" id="npTitle"></div>
+    <div class="np-progress" onclick="seek(event)"><div class="np-fill" id="npFill"></div></div>
+  </div>
+  <div class="np-time" id="npTime"></div>
+</div>
+
+<div class="footer">
+  <p>🎵 Marcus Fung — <a href="https://www.earthharmonysoundwellness.com">Earth Harmony Sound & Wellness</a></p>
+  <p style="margin-top:4px;">Curated exclusively for Soul2Sole Massage</p>
+</div>
+
+<script>
+const tracks = [
+  // Ambient Bliss — 432 Hz
+  { name: "Mother Nurture", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_a2460a35daef43e8996291514399f3f4.mp3" },
+  { name: "The Return Home", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_15a64d3a09a74ccc904f052e83e70cdf.mp3" },
+  { name: "Patience", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_daa5737b7246465aa100082b4ca79ff5.mp3" },
+  { name: "Spirit", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_3f1173daa59d4f488db65c73ab3a3eb8.mp3" },
+  { name: "Terra Nova", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_2c775246e8424b9199fda00440ec8f0c.mp3" },
+  { name: "Angelic", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_b1b01f7379c449f0ae389c1b51103d60.mp3" },
+  { name: "Rise", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_48f1151725eb4c88a5cd146fc828288c.mp3" },
+
+  // Ambient Piano
+  { name: "Blossoms", section: "piano", freq: "Piano", url: "https://music.wixstatic.com/mp3/ecb697_6fa750935ad44571a7ef23ad31a28771.mp3" },
+  { name: "Sweetness", section: "piano", freq: "Piano", url: "https://music.wixstatic.com/mp3/ecb697_307cc02777104f08968b3cb522567e01.mp3" },
+  { name: "Innocence", section: "piano", freq: "Piano", url: "https://music.wixstatic.com/mp3/ecb697_57c384a7f5c74a5bbf1e440c252ae8d7.mp3" },
+  { name: "Radical Acceptance", section: "piano", freq: "Piano", url: "https://music.wixstatic.com/mp3/ecb697_1b05d175e3b24e6eb8d77c13d38ebf01.mp3" },
+
+  // 528 Hz
+  { name: "You Are Welcome Here", section: "528", freq: "528 Hz", url: "https://music.wixstatic.com/mp3/ecb697_91b1b5a86aac41c8b8d565904eddddf3.mp3" },
+  { name: "Self Mastery", section: "528", freq: "528 Hz", url: "https://music.wixstatic.com/mp3/ecb697_af79dd864ffc4f6fb1f41ff963f86cc0.mp3" },
+  { name: "My Rest is Always Healing", section: "528", freq: "528 Hz", url: "https://music.wixstatic.com/mp3/ecb697_c8be7ee9b9ae46fbabd45e87369565f4.mp3" },
+
+  // Deep Journey
+  { name: "Awakening the Higher Self", section: "journey", freq: "Deep", url: "https://music.wixstatic.com/mp3/ecb697_0ce3892c9eb940d28ca252f6ad13b1c8.mp3" },
+  { name: "Awakening the Dreamer", section: "journey", freq: "Deep", url: "https://music.wixstatic.com/mp3/ecb697_2f8baec06e2842b599bd9ba338669467.mp3" },
+];
+
+let audio = new Audio();
+let currentTrack = -1;
+let isPlaying = false;
+
+function fmt(s) {
+  if (isNaN(s)) return '--:--';
+  const m = Math.floor(s/60), sec = Math.floor(s%60);
+  return `${m}:${sec<10?'0':''}${sec}`;
+}
+
+function renderTracks() {
+  const sections = { ambient: [], piano: [], '528': [], journey: [] };
+  tracks.forEach((t,i) => {
+    sections[t.section].push(`
+      <div class="track" id="track-${i}" onclick="playTrack(${i})">
+        <button class="play-btn">▶</button>
+        <div class="track-info">
+          <div class="track-name">${t.name}</div>
+          <div class="track-meta">${t.freq}</div>
+          <div class="progress-bar"><div class="progress-fill" id="prog-${i}"></div></div>
+        </div>
+        <div class="track-duration" id="dur-${i}"></div>
+      </div>
+    `);
+  });
+  document.getElementById('tracks-ambient').innerHTML = sections.ambient.join('');
+  document.getElementById('tracks-piano').innerHTML = sections.piano.join('');
+  document.getElementById('tracks-528').innerHTML = sections['528'].join('');
+  document.getElementById('tracks-journey').innerHTML = sections.journey.join('');
+}
+
+function playTrack(i) {
+  if (currentTrack === i && isPlaying) {
+    audio.pause();
+    isPlaying = false;
+    updateUI();
+    return;
+  }
+
+  document.querySelectorAll('.track').forEach(t => t.classList.remove('playing'));
+  document.getElementById(`track-${i}`).classList.add('playing');
+  
+  audio.src = tracks[i].url;
+  audio.play();
+  isPlaying = true;
+  currentTrack = i;
+  
+  document.getElementById('npTitle').textContent = tracks[i].name;
+  document.getElementById('nowPlaying').classList.add('active');
+  updateUI();
+}
+
+function togglePlay() {
+  if (isPlaying) { audio.pause(); } else { audio.play(); }
+  isPlaying = !isPlaying;
+  updateUI();
+}
+
+function updateUI() {
+  document.getElementById('npBtn').textContent = isPlaying ? '⏸' : '▶';
+  document.querySelectorAll('.track').forEach((t,i) => {
+    const btn = t.querySelector('.play-btn');
+    if (i === currentTrack) {
+      btn.textContent = isPlaying ? '⏸' : '▶';
+    } else {
+      btn.textContent = '▶';
+    }
+  });
+}
+
+function seek(e) {
+  const bar = e.currentTarget;
+  const pct = e.offsetX / bar.offsetWidth;
+  audio.currentTime = pct * audio.duration;
+}
+
+audio.addEventListener('timeupdate', () => {
+  if (!audio.duration) return;
+  const pct = (audio.currentTime / audio.duration * 100).toFixed(1);
+  document.getElementById('npFill').style.width = pct + '%';
+  document.getElementById('npTime').textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
+  if (currentTrack >= 0) {
+    const prog = document.getElementById(`prog-${currentTrack}`);
+    if (prog) prog.style.width = pct + '%';
+  }
+});
+
+audio.addEventListener('loadedmetadata', () => {
+  if (currentTrack >= 0) {
+    document.getElementById(`dur-${currentTrack}`).textContent = fmt(audio.duration);
+  }
+});
+
+audio.addEventListener('ended', () => {
+  if (currentTrack < tracks.length - 1) {
+    playTrack(currentTrack + 1);
+  } else {
+    isPlaying = false;
+    updateUI();
+  }
+});
+
+renderTracks();
+</script>
+</body>
+</html>
