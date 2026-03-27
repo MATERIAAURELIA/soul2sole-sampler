@@ -144,15 +144,13 @@
 
   .progress-bar {
     width: 100%;
-    height: 3px;
+    height: 16px;
     background: var(--border);
-    border-radius: 2px;
+    border-radius: 4px;
     margin-top: 8px;
     overflow: hidden;
-    display: none;
+    cursor: pointer;
   }
-
-  .track.playing .progress-bar { display: block; }
 
   .progress-fill {
     height: 100%;
@@ -309,7 +307,7 @@ function renderTracks() {
         <div class="track-info">
           <div class="track-name">${t.name}</div>
           <div class="track-meta">${t.freq}</div>
-          <div class="progress-bar"><div class="progress-fill" id="prog-${i}"></div></div>
+          <div class="progress-bar" onclick="event.stopPropagation(); scrubTrack(${i}, event)"><div class="progress-fill" id="prog-${i}"></div></div>
         </div>
         <div class="track-duration" id="dur-${i}"></div>
       </div>
@@ -320,6 +318,10 @@ function renderTracks() {
   document.getElementById('tracks-528').innerHTML = sections['528'].join('');
   document.getElementById('tracks-journey').innerHTML = sections.journey.join('');
 }
+
+// Preview window — tracks play from startAt for previewLen seconds
+// Set per-track or use defaults
+const DEFAULT_PREVIEW_LEN = 30; // seconds
 
 function playTrack(i) {
   if (currentTrack === i && isPlaying) {
@@ -333,6 +335,14 @@ function playTrack(i) {
   document.getElementById(`track-${i}`).classList.add('playing');
   
   audio.src = tracks[i].url;
+  const startAt = tracks[i].startAt || 0;
+  const previewLen = tracks[i].previewLen || DEFAULT_PREVIEW_LEN;
+  
+  audio.addEventListener('loadedmetadata', function onLoad() {
+    audio.currentTime = startAt;
+    audio.removeEventListener('loadedmetadata', onLoad);
+  }, {once: true});
+  
   audio.play();
   isPlaying = true;
   currentTrack = i;
@@ -341,6 +351,25 @@ function playTrack(i) {
   document.getElementById('nowPlaying').classList.add('active');
   updateUI();
 }
+
+// Auto-stop after preview length
+audio.addEventListener('timeupdate', () => {
+  if (currentTrack >= 0) {
+    const t = tracks[currentTrack];
+    const startAt = t.startAt || 0;
+    const previewLen = t.previewLen || DEFAULT_PREVIEW_LEN;
+    if (previewLen > 0 && audio.currentTime >= startAt + previewLen) {
+      // Fade or move to next
+      if (currentTrack < tracks.length - 1) {
+        playTrack(currentTrack + 1);
+      } else {
+        audio.pause();
+        isPlaying = false;
+        updateUI();
+      }
+    }
+  }
+});
 
 function togglePlay() {
   if (isPlaying) { audio.pause(); } else { audio.play(); }
@@ -364,6 +393,14 @@ function seek(e) {
   const bar = e.currentTarget;
   const pct = e.offsetX / bar.offsetWidth;
   audio.currentTime = pct * audio.duration;
+}
+
+function scrubTrack(i, e) {
+  if (currentTrack !== i) playTrack(i);
+  const bar = e.currentTarget;
+  const rect = bar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  if (audio.duration) audio.currentTime = pct * audio.duration;
 }
 
 audio.addEventListener('timeupdate', () => {
