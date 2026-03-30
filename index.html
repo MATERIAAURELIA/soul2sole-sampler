@@ -7,7 +7,7 @@
 <title>Earth Harmony - Music Sampler for Soul2Sole Massage</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500&display=swap');
-  
+
   :root {
     --bg: #0a0a0a;
     --card: #111111;
@@ -23,7 +23,7 @@
   }
 
   * { margin:0; padding:0; box-sizing:border-box; }
-  
+
   body {
     font-family: 'Inter', sans-serif;
     background: var(--bg);
@@ -240,8 +240,8 @@
 <body>
 
 <div class="hero">
-  <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=80" 
-       alt="Massage therapy" 
+  <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=80"
+       alt="Massage therapy"
        style="width:100%;max-height:220px;object-fit:cover;object-position:center 30%;border-radius:0 0 16px 16px;opacity:0.7;margin-bottom:1.5rem;">
   <h1>Earth Harmony</h1>
   <div class="subtitle">Curated Music Sampler for Soul2Sole Massage</div>
@@ -260,24 +260,24 @@
     <div class="ambient-wrap" style="display:flex;gap:10px;flex-wrap:wrap;">
       <div class="ambient-row">
         <button class="amb-btn" id="amb-waves" onclick="toggleAmbient('waves')" style="padding:10px 16px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;white-space:nowrap;">Waves</button>
-
+        <input type="range" min="0" max="100" value="25" style="flex:1;min-width:80px;height:8px;accent-color:var(--gold);" oninput="ambientSounds.waves.gain.gain.value=this.value/100">
       </div>
       <div class="ambient-row">
         <button class="amb-btn" id="amb-birds" onclick="toggleAmbient('birds')" style="padding:10px 16px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;white-space:nowrap;">Birds</button>
-
+        <input type="range" min="0" max="100" value="25" style="flex:1;min-width:80px;height:8px;accent-color:var(--gold);" oninput="ambientSounds.birds.gain.gain.value=this.value/100">
       </div>
     </div>
   </div>
 
   <div class="section-label">Ambient Bliss Series - 432 Hz</div>
   <div id="tracks-ambient"></div>
-  
+
   <div class="section-label">Ambient Piano Series</div>
   <div id="tracks-piano"></div>
-  
+
   <div class="section-label">Healing Frequencies - 528 Hz</div>
   <div id="tracks-528"></div>
-  
+
   <div class="section-label">Deep Journey</div>
   <div id="tracks-journey"></div>
 </div>
@@ -325,7 +325,7 @@ let audio = new Audio();
 let currentTrack = -1;
 let isPlaying = false;
 
-// Ambient nature layers — using Web Audio API gain nodes for iOS compatibility
+// Ambient nature layers - using Web Audio API gain nodes for iOS compatibility
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const ambientSounds = {
   waves: { audio: new Audio('https://music.wixstatic.com/mp3/ecb697_cb8497de7ce64767abf0cef338550387.mp3'), active: false },
@@ -422,20 +422,20 @@ function playTrack(i) {
 
   document.querySelectorAll('.track').forEach(t => t.classList.remove('playing'));
   document.getElementById(`track-${i}`).classList.add('playing');
-  
+
   audio.src = tracks[i].url;
   const startAt = tracks[i].startAt || 0;
   const previewLen = tracks[i].previewLen || DEFAULT_PREVIEW_LEN;
-  
+
   audio.addEventListener('loadedmetadata', function onLoad() {
     audio.currentTime = startAt;
     audio.removeEventListener('loadedmetadata', onLoad);
   }, {once: true});
-  
+
   audio.play();
   isPlaying = true;
   currentTrack = i;
-  
+
   document.getElementById('npTitle').textContent = tracks[i].name;
   document.getElementById('nowPlaying').classList.add('active');
   updateUI();
@@ -462,7 +462,7 @@ audio.addEventListener('timeupdate', () => {
 
 function nextTrack() {
   if (currentTrack < 0) { playTrack(0); return; }
-  if (currentTrack < tracks.length - 1) { playTrack(currentTrack + 1); } 
+  if (currentTrack < tracks.length - 1) { playTrack(currentTrack + 1); }
   else { playTrack(0); } // wrap around
 }
 
