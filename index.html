@@ -262,11 +262,11 @@
     <div class="ambient-wrap" style="display:flex;gap:10px;flex-wrap:wrap;">
       <div class="ambient-row">
         <button class="amb-btn" id="amb-waves" onclick="toggleAmbient('waves')" style="padding:10px 16px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;white-space:nowrap;">Waves</button>
-        <input type="range" min="0" max="100" value="25" style="flex:1;min-width:80px;height:8px;accent-color:var(--gold);" oninput="ambientSounds.waves.gain.gain.value=this.value/100">
+        <input type="range" min="0" max="100" value="50" style="flex:1;min-width:80px;height:8px;accent-color:var(--gold);" oninput="setGain('waves',this.value)">
       </div>
       <div class="ambient-row">
         <button class="amb-btn" id="amb-birds" onclick="toggleAmbient('birds')" style="padding:10px 16px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;white-space:nowrap;">Birds</button>
-        <input type="range" min="0" max="100" value="25" style="flex:1;min-width:80px;height:8px;accent-color:var(--gold);" oninput="ambientSounds.birds.gain.gain.value=this.value/100">
+        <input type="range" min="0" max="100" value="50" style="flex:1;min-width:80px;height:8px;accent-color:var(--gold);" oninput="setGain('birds',this.value)">
       </div>
     </div>
   </div>
@@ -338,10 +338,16 @@ Object.entries(ambientSounds).forEach(([k, s]) => {
   s.audio.crossOrigin = 'anonymous';
   s.source = audioCtx.createMediaElementSource(s.audio);
   s.gain = audioCtx.createGain();
-  s.gain.gain.value = 0.25;
+  s.gain.gain.value = 0.125; // 50% slider with cubic curve = 0.5^3
   s.source.connect(s.gain);
   s.gain.connect(audioCtx.destination);
 });
+
+function setGain(key, val) {
+  // Exponential curve: slider 0-100 maps to gain 0-1 with most detail in the quiet range
+  const x = val / 100;
+  ambientSounds[key].gain.gain.value = x * x * x;
+}
 
 function toggleAmbient(key) {
   if (audioCtx.state === 'suspended') audioCtx.resume();
