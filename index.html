@@ -260,19 +260,11 @@
     <div class="ambient-wrap" style="display:flex;gap:10px;flex-wrap:wrap;">
       <div class="ambient-row">
         <button class="amb-btn" id="amb-waves" onclick="toggleAmbient('waves')" style="padding:10px 16px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;white-space:nowrap;">Waves</button>
-        <div class="vol-btns" style="display:flex;gap:4px;">
-          <button onclick="setAmbientVol('waves',10)" class="vol-btn" data-key="waves" data-level="low" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold-dim);background:none;color:var(--text3);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">Low</button>
-          <button onclick="setAmbientVol('waves',40)" class="vol-btn active" data-key="waves" data-level="med" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold);background:var(--gold-dim);color:var(--gold);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">Med</button>
-          <button onclick="setAmbientVol('waves',90)" class="vol-btn" data-key="waves" data-level="high" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold-dim);background:none;color:var(--text3);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">High</button>
-        </div>
+
       </div>
       <div class="ambient-row">
         <button class="amb-btn" id="amb-birds" onclick="toggleAmbient('birds')" style="padding:10px 16px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;white-space:nowrap;">Birds</button>
-        <div class="vol-btns" style="display:flex;gap:4px;">
-          <button onclick="setAmbientVol('birds',10)" class="vol-btn" data-key="birds" data-level="low" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold-dim);background:none;color:var(--text3);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">Low</button>
-          <button onclick="setAmbientVol('birds',40)" class="vol-btn active" data-key="birds" data-level="med" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold);background:var(--gold-dim);color:var(--gold);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">Med</button>
-          <button onclick="setAmbientVol('birds',90)" class="vol-btn" data-key="birds" data-level="high" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold-dim);background:none;color:var(--text3);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">High</button>
-        </div>
+
       </div>
     </div>
   </div>
@@ -333,14 +325,24 @@ let audio = new Audio();
 let currentTrack = -1;
 let isPlaying = false;
 
-// Ambient nature layers
+// Ambient nature layers — using Web Audio API gain nodes for iOS compatibility
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const ambientSounds = {
   waves: { audio: new Audio('https://music.wixstatic.com/mp3/ecb697_cb8497de7ce64767abf0cef338550387.mp3'), active: false },
   birds: { audio: new Audio('https://music.wixstatic.com/mp3/ecb697_8d8cb2d085f6462d9751f2e8cc195572.mp3'), active: false }
 };
-Object.values(ambientSounds).forEach(s => { s.audio.loop = true; s.audio.volume = 0.3; });
+Object.entries(ambientSounds).forEach(([k, s]) => {
+  s.audio.loop = true;
+  s.audio.crossOrigin = 'anonymous';
+  s.source = audioCtx.createMediaElementSource(s.audio);
+  s.gain = audioCtx.createGain();
+  s.gain.gain.value = 0.5;
+  s.source.connect(s.gain);
+  s.gain.connect(audioCtx.destination);
+});
 
 function toggleAmbient(key) {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
   const s = ambientSounds[key];
   const btn = document.getElementById('amb-' + key);
   if (s.active) {
@@ -358,20 +360,7 @@ function toggleAmbient(key) {
   }
 }
 
-function setAmbientVol(key, val) {
-  ambientSounds[key].audio.volume = val / 100;
-  document.querySelectorAll('.vol-btn[data-key="'+key+'"]').forEach(b => {
-    b.style.background = 'none';
-    b.style.color = 'var(--text3)';
-    b.style.borderColor = 'var(--gold-dim)';
-  });
-  const active = document.querySelector('.vol-btn[data-key="'+key+'"][data-level="'+(val<=10?'low':val<=40?'med':'high')+'"]');
-  if (active) {
-    active.style.background = 'var(--gold-dim)';
-    active.style.color = 'var(--gold)';
-    active.style.borderColor = 'var(--gold)';
-  }
-}
+
 
 function playAllToggle() {
   if (isPlaying) {
