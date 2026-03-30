@@ -336,7 +336,7 @@ Object.entries(ambientSounds).forEach(([k, s]) => {
   s.audio.crossOrigin = 'anonymous';
   s.source = audioCtx.createMediaElementSource(s.audio);
   s.gain = audioCtx.createGain();
-  s.gain.gain.value = 0.5;
+  s.gain.gain.value = 0.25;
   s.source.connect(s.gain);
   s.gain.connect(audioCtx.destination);
 });
