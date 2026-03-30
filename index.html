@@ -220,9 +220,58 @@
 
   .footer a { color: var(--gold); text-decoration: none; }
 
+  /* Range slider mobile styling */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+  }
+
+  .ambient-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+  .ambient-row input[type="range"] {
+    flex: 1;
+    min-width: 80px;
+    height: 6px;
+    accent-color: var(--gold);
+  }
+
   @media (max-width: 500px) {
     .hero h1 { font-size: 1.4rem; }
     .track { padding: 12px; }
+    .ambient-wrap { flex-direction: column !important; gap: 12px !important; }
+    .ambient-row { width: 100%; }
+    .ambient-row input[type="range"] { min-width: 120px; }
+    input[type="range"]::-webkit-slider-thumb { width: 30px; height: 30px; }
+    input[type="range"]::-moz-range-thumb { width: 30px; height: 30px; }
   }
 </style>
 </head>
@@ -234,24 +283,26 @@
        style="width:100%;max-height:220px;object-fit:cover;object-position:center 30%;border-radius:0 0 16px 16px;opacity:0.7;margin-bottom:1.5rem;">
   <h1>Earth Harmony</h1>
   <div class="subtitle">Curated Music Sampler for Soul2Sole Massage</div>
-  <div class="badge">Ultimate Spa and Reiki Collection - 30s Previews</div>
+  <div class="badge">Ultimate Spa and Reiki Collection - 45s Previews</div>
+  <div style="color:var(--text2);font-size:0.9rem;margin-top:8px;letter-spacing:0.05em;">Current Library is over 200 tracks to choose from</div>
 </div>
 
 <div class="container">
   <div style="text-align:center;margin-bottom:1.5rem;">
     <button id="playAllBtn" onclick="playAllToggle()" style="padding:14px 40px;border-radius:30px;border:2px solid var(--gold);background:var(--gold-dim);color:var(--gold);font-family:'Cinzel',serif;font-size:1rem;letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;">PLAY ALL PREVIEWS</button>
+    <button id="nextBtn" onclick="nextTrack()" style="padding:14px 30px;border-radius:30px;border:2px solid var(--gold-dim);background:none;color:var(--gold);font-family:'Cinzel',serif;font-size:1rem;letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;margin-left:10px;">NEXT ⏭</button>
   </div>
 
   <div class="ambient-layer" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:1.5rem;">
     <div style="font-size:0.8rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Ambient Nature Layer</div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <div style="display:flex;align-items:center;gap:8px;flex:1;">
-        <button class="amb-btn" id="amb-waves" onclick="toggleAmbient('waves')" style="padding:8px 14px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.85rem;transition:all 0.2s;white-space:nowrap;">Waves</button>
-        <input type="range" min="0" max="100" value="30" style="flex:1;accent-color:var(--gold);" oninput="ambientSounds.waves.audio.volume=this.value/100">
+    <div class="ambient-wrap" style="display:flex;gap:10px;flex-wrap:wrap;">
+      <div class="ambient-row">
+        <button class="amb-btn" id="amb-waves" onclick="toggleAmbient('waves')" style="padding:10px 16px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;white-space:nowrap;">Waves</button>
+        <input type="range" min="0" max="100" value="30" id="vol-waves" oninput="setAmbientVol('waves',this.value)">
       </div>
-      <div style="display:flex;align-items:center;gap:8px;flex:1;">
-        <button class="amb-btn" id="amb-birds" onclick="toggleAmbient('birds')" style="padding:8px 14px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.85rem;transition:all 0.2s;white-space:nowrap;">Birds</button>
-        <input type="range" min="0" max="100" value="30" style="flex:1;accent-color:var(--gold);" oninput="ambientSounds.birds.audio.volume=this.value/100">
+      <div class="ambient-row">
+        <button class="amb-btn" id="amb-birds" onclick="toggleAmbient('birds')" style="padding:10px 16px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;white-space:nowrap;">Birds</button>
+        <input type="range" min="0" max="100" value="30" id="vol-birds" oninput="setAmbientVol('birds',this.value)">
       </div>
     </div>
   </div>
@@ -284,13 +335,14 @@
 </div>
 
 <script>
-const DEFAULT_PREVIEW_LEN_VAL = 20; // 20 second previews
+const DEFAULT_PREVIEW_LEN_VAL = 45; // 45 second previews
 
 const tracks = [
   // Ambient Bliss - 432 Hz
   { name: "The Return Home", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_15a64d3a09a74ccc904f052e83e70cdf.mp3", img: "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=120&q=80" },
   { name: "Patience", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_daa5737b7246465aa100082b4ca79ff5.mp3", img: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=120&q=80" },
-  { name: "Angelic", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_b1b01f7379c449f0ae389c1b51103d60.mp3", img: "https://images.unsplash.com/photo-1501426026826-31c667bdf23d?w=120&q=80" },
+  { name: "Beautiful Revolutions", section: "ambient", freq: "Handpan", url: "https://music.wixstatic.com/mp3/ecb697_a962068540874e6abcac0daba0886801.mp3", img: "https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=120&q=80" },
+  { name: "Ariumi's Grace", section: "ambient", freq: "Handpan", url: "https://music.wixstatic.com/mp3/ecb697_622342acf29646c6a542d43ced9ee896.mp3", img: "https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=120&q=80" },
   { name: "Rise", section: "ambient", freq: "432 Hz", url: "https://music.wixstatic.com/mp3/ecb697_48f1151725eb4c88a5cd146fc828288c.mp3", img: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=120&q=80" },
 
   // Ambient Piano
@@ -336,9 +388,8 @@ function toggleAmbient(key) {
   }
 }
 
-function setAmbientVol(val) {
-  const v = val / 100;
-  Object.values(ambientSounds).forEach(s => s.audio.volume = v);
+function setAmbientVol(key, val) {
+  ambientSounds[key].audio.volume = val / 100;
 }
 
 function playAllToggle() {
@@ -438,6 +489,12 @@ audio.addEventListener('timeupdate', () => {
     }
   }
 });
+
+function nextTrack() {
+  if (currentTrack < 0) { playTrack(0); return; }
+  if (currentTrack < tracks.length - 1) { playTrack(currentTrack + 1); } 
+  else { playTrack(0); } // wrap around
+}
 
 function togglePlay() {
   if (isPlaying) { audio.pause(); } else { audio.play(); }
