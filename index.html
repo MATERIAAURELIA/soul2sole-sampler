@@ -261,17 +261,17 @@
       <div class="ambient-row">
         <button class="amb-btn" id="amb-waves" onclick="toggleAmbient('waves')" style="padding:10px 16px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;white-space:nowrap;">Waves</button>
         <div class="vol-btns" style="display:flex;gap:4px;">
-          <button onclick="setAmbientVol('waves',15)" class="vol-btn" data-key="waves" data-level="low" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold-dim);background:none;color:var(--text3);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">Low</button>
-          <button onclick="setAmbientVol('waves',35)" class="vol-btn active" data-key="waves" data-level="med" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold);background:var(--gold-dim);color:var(--gold);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">Med</button>
-          <button onclick="setAmbientVol('waves',60)" class="vol-btn" data-key="waves" data-level="high" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold-dim);background:none;color:var(--text3);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">High</button>
+          <button onclick="setAmbientVol('waves',10)" class="vol-btn" data-key="waves" data-level="low" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold-dim);background:none;color:var(--text3);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">Low</button>
+          <button onclick="setAmbientVol('waves',40)" class="vol-btn active" data-key="waves" data-level="med" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold);background:var(--gold-dim);color:var(--gold);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">Med</button>
+          <button onclick="setAmbientVol('waves',90)" class="vol-btn" data-key="waves" data-level="high" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold-dim);background:none;color:var(--text3);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">High</button>
         </div>
       </div>
       <div class="ambient-row">
         <button class="amb-btn" id="amb-birds" onclick="toggleAmbient('birds')" style="padding:10px 16px;border-radius:20px;border:1px solid var(--gold-dim);background:none;color:var(--text2);cursor:pointer;font-size:0.9rem;transition:all 0.2s;white-space:nowrap;">Birds</button>
         <div class="vol-btns" style="display:flex;gap:4px;">
-          <button onclick="setAmbientVol('birds',15)" class="vol-btn" data-key="birds" data-level="low" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold-dim);background:none;color:var(--text3);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">Low</button>
-          <button onclick="setAmbientVol('birds',35)" class="vol-btn active" data-key="birds" data-level="med" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold);background:var(--gold-dim);color:var(--gold);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">Med</button>
-          <button onclick="setAmbientVol('birds',60)" class="vol-btn" data-key="birds" data-level="high" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold-dim);background:none;color:var(--text3);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">High</button>
+          <button onclick="setAmbientVol('birds',10)" class="vol-btn" data-key="birds" data-level="low" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold-dim);background:none;color:var(--text3);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">Low</button>
+          <button onclick="setAmbientVol('birds',40)" class="vol-btn active" data-key="birds" data-level="med" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold);background:var(--gold-dim);color:var(--gold);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">Med</button>
+          <button onclick="setAmbientVol('birds',90)" class="vol-btn" data-key="birds" data-level="high" style="padding:6px 10px;border-radius:12px;border:1px solid var(--gold-dim);background:none;color:var(--text3);cursor:pointer;font-size:0.75rem;transition:all 0.2s;">High</button>
         </div>
       </div>
     </div>
@@ -365,7 +365,7 @@ function setAmbientVol(key, val) {
     b.style.color = 'var(--text3)';
     b.style.borderColor = 'var(--gold-dim)';
   });
-  const active = document.querySelector('.vol-btn[data-key="'+key+'"][data-level="'+(val<=15?'low':val<=35?'med':'high')+'"]');
+  const active = document.querySelector('.vol-btn[data-key="'+key+'"][data-level="'+(val<=10?'low':val<=40?'med':'high')+'"]');
   if (active) {
     active.style.background = 'var(--gold-dim)';
     active.style.color = 'var(--gold)';
