@@ -472,17 +472,42 @@ function togglePlay() {
   updateUI();
 }
 
+function fmtTime(s) {
+  const m = Math.floor(s/60);
+  const sec = Math.floor(s%60);
+  return m + ':' + (sec<10?'0':'') + sec;
+}
+
 function updateUI() {
   document.getElementById('npBtn').textContent = isPlaying ? 'II' : 'Play';
   document.querySelectorAll('.track').forEach((t,i) => {
     const btn = t.querySelector('.play-btn');
+    const dur = t.querySelector('.track-duration');
     if (i === currentTrack) {
       btn.textContent = isPlaying ? 'II' : 'Play';
+      const startAt = tracks[i].startAt || 0;
+      const previewLen = tracks[i].previewLen || DEFAULT_PREVIEW_LEN;
+      const elapsed = Math.max(0, audio.currentTime - startAt);
+      dur.textContent = fmtTime(elapsed) + ' / ' + fmtTime(previewLen);
     } else {
       btn.textContent = 'Play';
+      const pl = tracks[i].previewLen || DEFAULT_PREVIEW_LEN;
+      dur.textContent = fmtTime(pl);
     }
   });
+  // Update bottom bar
+  if (currentTrack >= 0) {
+    const startAt = tracks[currentTrack].startAt || 0;
+    const previewLen = tracks[currentTrack].previewLen || DEFAULT_PREVIEW_LEN;
+    const elapsed = Math.max(0, audio.currentTime - startAt);
+    const pct = Math.min(100, (elapsed / previewLen) * 100);
+    document.getElementById('npFill').style.width = pct + '%';
+    document.getElementById('npTime').textContent = fmtTime(elapsed) + ' / ' + fmtTime(previewLen);
+  }
 }
+
+// Keep UI updating during playback
+audio.addEventListener('timeupdate', updateUI);
 
 function seek(e) {
   const bar = e.currentTarget;
