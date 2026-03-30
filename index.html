@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>Earth Harmony - Music Sampler for Soul2Sole Massage</title>
 <style>
@@ -166,6 +166,8 @@
     bottom: 0;
     left: 0;
     right: 0;
+    z-index: 999;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     background: #0d0d0d;
     border-top: 1px solid var(--border);
     padding: 12px 16px;
@@ -213,7 +215,7 @@
 
   .footer {
     text-align: center;
-    padding: 2rem 0 4rem;
+    padding: 2rem 0 6rem;
     color: var(--text3);
     font-size: 0.75rem;
   }
